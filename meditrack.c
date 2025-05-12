@@ -80,8 +80,50 @@ void updateStock(MedicineNode* head, char* name, int quantity) {
             printf("Stok diperbarui: %s, Stok Baru: %d\n", name, head->med.stock);
             return;
         }
-        head = head->next;
+        head = head->next;    
     }
     // Jika obat tidak ditemukan
     printf("Obat %s tidak ditemukan.\n", name);
+}
+
+// --- Fungsi Min Heap ---
+// Membuat Min Heap baru
+MinHeap* createHeap(int capacity) {
+    // Alokasi memori untuk heap
+    MinHeap* heap = (MinHeap*)malloc(sizeof(MinHeap));
+    heap->nodes = (HeapNode*)malloc(capacity * sizeof(HeapNode));
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+// Menambahkan tanggal kadaluwarsa ke Min Heap
+void addToHeap(MinHeap* heap, char* expiry, char* name) {
+    // Jika heap penuh, abaikan
+    if (heap->size == heap->capacity) return;
+    // Tambahkan node baru di akhir heap
+    int index = heap->size++;
+    strcpy(heap->nodes[index].expiry, expiry);
+    strcpy(heap->nodes[index].name, name);
+    // Perbaiki struktur heap dengan membandingkan ke atas
+    while (index > 0) {
+        int parent = (index - 1) / 2;
+        if (strcmp(heap->nodes[parent].expiry, heap->nodes[index].expiry) <= 0) break;
+        // Tukar node dengan parent
+        HeapNode temp = heap->nodes[index];
+        heap->nodes[index] = heap->nodes[parent];
+        heap->nodes[parent] = temp;
+        index = parent;
+    }
+}
+
+// Mengambil obat dengan kadaluwarsa terdekat
+HeapNode getNearestExpiry(MinHeap* heap) {
+    // Jika heap kosong, kembalikan node kosong
+    if (heap->size == 0) {
+        HeapNode empty = {"", ""};
+        return empty;
+    }
+    // Kembalikan node di root (kadaluwarsa terdekat)
+    return heap->nodes[0];
 }
