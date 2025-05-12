@@ -127,3 +127,96 @@ HeapNode getNearestExpiry(MinHeap* heap) {
     // Kembalikan node di root (kadaluwarsa terdekat)
     return heap->nodes[0];
 }
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
+
+#include "meditrack.h" // Header buatan sendiri
+
+int main() {
+    MedicineNode* head = NULL;
+    MinHeap* heap = createHeap(100); // Kapasitas awal heap
+    int choice;
+
+    while (1) {
+        clearScreen();
+        displayHeader();
+        printf("\nMenu Utama:\n");
+        printf("1. Tambah Obat\n");
+        printf("2. Tampilkan Inventori\n");
+        printf("3. Perbarui Stok\n");
+        printf("4. Lihat Obat Kadaluwarsa Terdekat\n");
+        printf("5. Keluar\n");
+        printf("Pilih opsi (1-5): ");
+        scanf("%d", &choice);
+        getchar(); // Mengonsumsi newline
+
+        switch (choice) {
+            case 1: {
+                Medicine med;
+                printf("\n--- Tambah Obat Baru ---\n");
+                printf("Nama Obat: ");
+                fgets(med.name, sizeof(med.name), stdin);
+                med.name[strcspn(med.name, "\n")] = 0; // Hapus newline
+
+                printf("Stok: ");
+                scanf("%d", &med.stock);
+                getchar();
+
+                printf("Tanggal Kadaluwarsa (YYYY-MM-DD): ");
+                fgets(med.expiry, sizeof(med.expiry), stdin);
+                med.expiry[strcspn(med.expiry, "\n")] = 0;
+
+                addMedicine(&head, med, heap);
+                break;
+            }
+            case 2:
+                showMedicines(head);
+                break;
+            case 3: {
+                char name[50];
+                int qty;
+                printf("\n--- Perbarui Stok Obat ---\n");
+                printf("Nama Obat: ");
+                fgets(name, sizeof(name), stdin);
+                name[strcspn(name, "\n")] = 0;
+
+                printf("Jumlah Penambahan Stok: ");
+                scanf("%d", &qty);
+                getchar();
+
+                updateStock(head, name, qty);
+                printf("Tekan Enter untuk kembali...");
+                getchar();
+                break;
+            }
+            case 4: {
+                HeapNode soon = getNearestExpiry(heap);
+                if (strcmp(soon.name, "") == 0) {
+                    printf("\nTidak ada data obat dalam heap.\n");
+                } else {
+                    printf("\nObat dengan kadaluwarsa terdekat:\n");
+                    printf("Nama: %s\n", soon.name);
+                    printf("Kadaluwarsa: %s\n", soon.expiry);
+                }
+                printf("Tekan Enter untuk kembali...");
+                getchar();
+                break;
+            }
+            case 5:
+                printf("\nTerima kasih telah menggunakan MediTrack!\n");
+                exit(0);
+            default:
+                printf("Pilihan tidak valid. Tekan Enter untuk coba lagi...");
+                getchar();
+        }
+    }
+
+    return 0;
+}
+
