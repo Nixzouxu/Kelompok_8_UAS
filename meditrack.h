@@ -62,3 +62,87 @@ HeapNode getNearestExpiry(MinHeap* heap);
 Queue* createQueue();
 void addRequest(Queue* queue, char* medName, int quantity);
 void processRequest(Queue* queue, MedicineNode* head);
+#include "meditrack.h" // Ganti jika nama file header berbeda
+
+int main() {
+    MedicineNode* head = NULL;          // Linked list obat
+    MinHeap* heap = createHeap(100);    // Heap untuk tanggal kadaluwarsa
+    Queue* queue = createQueue();       // Queue permintaan obat
+
+    int choice;
+    do {
+        clearScreen();
+        displayHeader();
+        printf("\nMenu:\n");
+        printf("1. Tambah Obat\n");
+        printf("2. Lihat Daftar Obat\n");
+        printf("3. Tambah Permintaan Obat\n");
+        printf("4. Proses Permintaan Obat\n");
+        printf("5. Lihat Obat Kadaluwarsa Terdekat\n");
+        printf("0. Keluar\n");
+        printf("Pilihan Anda: ");
+        scanf("%d", &choice);
+        getchar(); // Buang newline
+
+        if (choice == 1) {
+            Medicine med;
+            printf("Nama obat: ");
+            fgets(med.name, sizeof(med.name), stdin);
+            med.name[strcspn(med.name, "\n")] = 0;
+
+            printf("Stok: ");
+            scanf("%d", &med.stock);
+            getchar();
+
+            printf("Tanggal kadaluwarsa (YYYY-MM-DD): ");
+            fgets(med.expiry, sizeof(med.expiry), stdin);
+            med.expiry[strcspn(med.expiry, "\n")] = 0;
+
+            addMedicine(&head, med, heap);
+            showLoading();
+
+        } else if (choice == 2) {
+            showMedicines(head);
+            printf("\nTekan ENTER untuk kembali ke menu...");
+            getchar();
+
+        } else if (choice == 3) {
+            char name[50];
+            int qty;
+
+            printf("Nama obat: ");
+            fgets(name, sizeof(name), stdin);
+            name[strcspn(name, "\n")] = 0;
+
+            printf("Jumlah permintaan: ");
+            scanf("%d", &qty);
+            getchar();
+
+            addRequest(queue, name, qty);
+            printf("Permintaan telah ditambahkan!\n");
+            sleep(1);
+
+        } else if (choice == 4) {
+            processRequest(queue, head);
+            printf("\nTekan ENTER untuk kembali ke menu...");
+            getchar();
+
+        } else if (choice == 5) {
+            if (heap->size > 0) {
+                HeapNode nearest = getNearestExpiry(heap);
+                printf("Obat kadaluwarsa terdekat:\n");
+                printf("Nama : %s\n", nearest.name);
+                printf("Kedaluwarsa : %s\n", nearest.expiry);
+            } else {
+                printf("Heap kosong.\n");
+            }
+            printf("\nTekan ENTER untuk kembali ke menu...");
+            getchar();
+        }
+
+    } while (choice != 0);
+
+    printf("Terima kasih telah menggunakan MediTrack!\n");
+    return 0;
+}
+
