@@ -169,6 +169,20 @@ void processRequest(Queue* queue, MedicineNode* head) {
         getchar(); // Menunggu input Enter
         return;
     }
+// Ambil permintaan dari depan antrian
+    RequestObat* temp = queue->front;
+    printf("\nMemproses permintaan: %s, Jumlah: %d\n", temp->medName, temp->quantity);
+    // Kurangi stok obat
+    updateStock(head, temp->medName, -temp->quantity);
+    // Pindah ke node berikutnya dan bebaskan memori
+    queue->front = queue->front->next;
+    if (!queue->front) queue->rear = NULL;
+    free(temp);
+    printf("Tekan Enter untuk kembali...");
+    getchar(); 
+    getchar(); // Menunggu input Enter
+}
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
