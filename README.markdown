@@ -170,9 +170,12 @@ Masukkan pilihan: _
 
 ## Pembagian Tim
 
-Muhammad Hafidz
-Nayla Nabila Syahel
-Syakila Naira
-Muhammad Sulthan Shadiq
+   * Muhammad Hafidz (2408107010052)
+   
+   * Nayla Nabila Syahel (2408107010005)
+   
+   * Syakila Naira (2408107010034)
+   
+   * Muhammad Sulthan Shadiq (2408107010104)
 
 Terima kasih telah menggunakan MediTrack! Jika ada pertanyaan atau saran, silakan hubungi kami melalui GitHub atau email tim. Semoga sukses!
