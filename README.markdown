@@ -63,11 +63,11 @@ Untuk menjalankan MediTrack di komputer Anda, ikuti langkah-langkah berikut. Jan
 
 ### Langkah-langkah Instalasi
 1. **Unduh Kode**:
-   - Kunjungi repositori GitHub kami di [https://github.com/Nixzouxu/MediTrack](https://github.com/Nixzouxu/MediTrack) (ganti dengan URL repositori Anda).
+   - Kunjungi repositori GitHub kami di [https://github.com/Nixzouxu/Kelompok_8_UAS](https://github.com/Nixzouxu/Kelompok_8_UAS) 
    - Klik tombol **Code** (hijau) lalu pilih **Download ZIP**. Ekstrak file ZIP ke folder pilihan Anda.
    - Atau, jika Anda tahu cara pakai Git, ketik perintah ini di terminal:
      ```bash
-     git clone https://github.com/Nixzouxu/MediTrack.git
+     git clone https://github.com/Nixzouxu/Kelompok_8_UAS.git
      ```
    - Pastikan ada dua file: `meditrack.c` dan `meditrack.h` di folder yang sama.
 
