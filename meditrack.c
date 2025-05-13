@@ -80,7 +80,7 @@ void updateStock(MedicineNode* head, char* name, int quantity) {
             printf("Stok diperbarui: %s, Stok Baru: %d\n", name, head->med.stock);
             return;
         }
-        head = head->next;    
+        head = head->next;
     }
     // Jika obat tidak ditemukan
     printf("Obat %s tidak ditemukan.\n", name);
@@ -127,6 +127,7 @@ HeapNode getNearestExpiry(MinHeap* heap) {
     // Kembalikan node di root (kadaluwarsa terdekat)
     return heap->nodes[0];
 }
+
 // --- Fungsi Queue ---
 // Membuat antrian baru
 Queue* createQueue() {
@@ -169,7 +170,7 @@ void processRequest(Queue* queue, MedicineNode* head) {
         getchar(); // Menunggu input Enter
         return;
     }
-// Ambil permintaan dari depan antrian
+    // Ambil permintaan dari depan antrian
     RequestObat* temp = queue->front;
     printf("\nMemproses permintaan: %s, Jumlah: %d\n", temp->medName, temp->quantity);
     // Kurangi stok obat
@@ -183,86 +184,105 @@ void processRequest(Queue* queue, MedicineNode* head) {
     getchar(); // Menunggu input Enter
 }
 
-// program utama
+// Program utama
 int main() {
-    MedicineNode* head = NULL;
-    MinHeap* heap = createHeap(100); // Kapasitas awal heap
+    // Menampilkan efek loading saat program dimulai
+    clearScreen();
+    showLoading();
+    // Inisialisasi struktur data
+    MedicineNode* head = NULL; // Linked List untuk obat
+    MinHeap* heap = createHeap(100); // Min Heap untuk kadaluwarsa
+    Queue* queue = createQueue(); // Queue untuk permintaan
     int choice;
-
-    while (1) {
+    do {
+        // Membersihkan layar sebelum menampilkan menu
         clearScreen();
+        // Menampilkan header dan menu
         displayHeader();
-        printf("\nMenu Utama:\n");
+        printf("\nPilih Menu:\n");
         printf("1. Tambah Obat\n");
-        printf("2. Tampilkan Inventori\n");
-        printf("3. Perbarui Stok\n");
-        printf("4. Lihat Obat Kadaluwarsa Terdekat\n");
-        printf("5. Keluar\n");
-        printf("Pilih opsi (1-5): ");
+        printf("2. Lihat Semua Obat\n");
+        printf("3. Lihat Obat Terdekat Kadaluwarsa\n");
+        printf("4. Tambah Permintaan Obat\n");
+        printf("5. Proses Permintaan Obat\n");
+        printf("6. Keluar\n");
+        printf("\nMasukkan pilihan: ");
         scanf("%d", &choice);
-        getchar(); // Mengonsumsi newline
-
+        clearScreen(); // Membersihkan layar setelah input
         switch (choice) {
             case 1: {
+                // Menambahkan obat baru
                 Medicine med;
-                printf("\n--- Tambah Obat Baru ---\n");
-                printf("Nama Obat: ");
-                fgets(med.name, sizeof(med.name), stdin);
-                med.name[strcspn(med.name, "\n")] = 0; // Hapus newline
-
-                printf("Stok: ");
+                printf("Masukkan Nama Obat: ");
+                scanf("%s", med.name);
+                printf("Masukkan Stok: ");
                 scanf("%d", &med.stock);
-                getchar();
-
-                printf("Tanggal Kadaluwarsa (YYYY-MM-DD): ");
-                fgets(med.expiry, sizeof(med.expiry), stdin);
-                med.expiry[strcspn(med.expiry, "\n")] = 0;
-
+                printf("Masukkan Kadaluwarsa (YYYY-MM-DD): ");
+                scanf("%s", med.expiry);
                 addMedicine(&head, med, heap);
                 break;
             }
             case 2:
+                // Menampilkan semua obat
                 showMedicines(head);
                 break;
             case 3: {
-                char name[50];
-                int qty;
-                printf("\n--- Perbarui Stok Obat ---\n");
-                printf("Nama Obat: ");
-                fgets(name, sizeof(name), stdin);
-                name[strcspn(name, "\n")] = 0;
-
-                printf("Jumlah Penambahan Stok: ");
-                scanf("%d", &qty);
-                getchar();
-
-                updateStock(head, name, qty);
+                // Menampilkan obat dengan kadaluwarsa terdekat
+                HeapNode nearest = getNearestExpiry(heap);
+                if (strlen(nearest.expiry) > 0) {
+                    printf("\nKadaluwarsa Terdekat:\n");
+                    printf("------------------------------------\n");
+                    printf("Obat: %s\nTanggal: %s\n", nearest.name, nearest.expiry);
+                    printf("------------------------------------\n");
+                } else {
+                    printf("\nTidak ada obat di inventori.\n");
+                }
                 printf("Tekan Enter untuk kembali...");
-                getchar();
+                getchar(); // Menangkap Enter
+                getchar(); // Menunggu input Enter
                 break;
             }
             case 4: {
-                HeapNode soon = getNearestExpiry(heap);
-                if (strcmp(soon.name, "") == 0) {
-                    printf("\nTidak ada data obat dalam heap.\n");
-                } else {
-                    printf("\nObat dengan kadaluwarsa terdekat:\n");
-                    printf("Nama: %s\n", soon.name);
-                    printf("Kadaluwarsa: %s\n", soon.expiry);
-                }
-                printf("Tekan Enter untuk kembali...");
-                getchar();
+                // Menambahkan permintaan obat
+                char name[50];
+                int quantity;
+                printf("Masukkan Nama Obat: ");
+                scanf("%s", name);
+                printf("Masukkan Jumlah: ");
+                scanf("%d", &quantity);
+                addRequest(queue, name, quantity);
                 break;
             }
             case 5:
+                // Memproses permintaan obat
+                processRequest(queue, head);
+                break;
+            case 6:
+                // Keluar dari program
                 printf("\nTerima kasih telah menggunakan MediTrack!\n");
-                exit(0);
+                break;
             default:
-                printf("Pilihan tidak valid. Tekan Enter untuk coba lagi...");
-                getchar();
+                // Menangani pilihan tidak valid
+                printf("\nPilihan tidak valid. Silakan coba lagi.\n");
+                printf("Tekan Enter untuk kembali...");
+                getchar(); // Menangkap Enter
+                getchar(); // Menunggu input Enter
         }
-    }
+    } while (choice != 6);
 
+    // Membersihkan memori
+    while (head) {
+        MedicineNode* temp = head;
+        head = head->next;
+        free(temp);
+    }
+    free(heap->nodes);
+    free(heap);
+    while (queue->front) {
+        RequestObat* temp = queue->front;
+        queue->front = queue->front->next;
+        free(temp);
+    }
+    free(queue);
     return 0;
 }
-
