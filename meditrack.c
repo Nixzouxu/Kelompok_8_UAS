@@ -183,17 +183,7 @@ void processRequest(Queue* queue, MedicineNode* head) {
     getchar(); // Menunggu input Enter
 }
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#ifdef _WIN32
-#include <windows.h>
-#else
-#include <unistd.h>
-#endif
-
-#include "meditrack.h" // Header buatan sendiri
-
+// program utama
 int main() {
     MedicineNode* head = NULL;
     MinHeap* heap = createHeap(100); // Kapasitas awal heap
